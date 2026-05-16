@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Конструктор | Обучение 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0A0A0A;
+            --surface-color: #111111;
+            --accent-blue: #00D2FF;
+            --accent-purple: #A855F7;
+            --text-main: #E6EDF3;
+            --text-dim: #8B949E;
+            --border: #30363d55;
+            --neon-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 2px 2px, #1a1a1a 1px, transparent 0);
+            background-size: 40px 40px;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- HEADER --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: bold; color: var(--accent-blue); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .nav-links { display: flex; gap: 25px; list-style: none; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-family: 'JetBrains Mono', monospace; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-purple); }
+
+        /* --- SECTIONS --- */
+        section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+        .section-title { text-align: center; margin-bottom: 50px; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; font-size: 1.5rem; }
+
+        /* --- HERO --- */
+        .hero { text-align: center; border-bottom: none; padding-top: 60px; padding-bottom: 40px; }
+        .hero h1 { 
+            font-size: clamp(1.6rem, 5vw, 2.8rem); 
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 800px; margin: 0 auto; }
+
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .goal-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 16px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .goal-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-5px);
+        }
+        .goal-card h3 {
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .goal-card p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+        .goal-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+
+
+        .demo-bot-section { background: rgba(0, 210, 255, 0.03); border-radius: 24px; padding: 40px; border: 1px solid var(--border); margin-top: 20px; }
+        .bot-window { max-width: 600px; margin: 0 auto; background: #161b22; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .bot-header { background: #21262d; padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+        .bot-status { width: 10px; height: 10px; background: #238636; border-radius: 50%; }
+        .bot-messages { height: 250px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { padding: 10px 15px; border-radius: 12px; max-width: 85%; font-size: 0.9rem; }
+        .msg.bot { background: #30363d; align-self: flex-start; color: var(--text-main); }
+        .msg.user { background: var(--accent-purple); align-self: flex-end; color: white; }
+        .bot-input { padding: 15px; background: #0d1117; display: flex; gap: 10px; border-top: 1px solid var(--border); }
+        .bot-input input { flex: 1; background: transparent; border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; color: white; outline: none; }
+        .bot-input button { background: var(--accent-blue); border: none; color: black; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+
+
+        .lesson-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .lesson-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            background: rgba(255,255,255,0.02);
+        }
+        .lesson-content {
+            padding: 0 25px 25px;
+            display: none;
+            border-top: 1px solid var(--border);
+            background: #0d0d0d;
+        }
+        .lesson-card.active .lesson-content { display: block; padding-top: 25px; }
+        .lesson-card.active { border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(0, 210, 255, 0.1); }
+
+        .info-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .info-table tr { border-bottom: 1px solid #222; }
+        .info-table tr:last-child { border-bottom: none; }
+        .info-table td { padding: 12px 0; vertical-align: top; font-size: 0.9rem; }
+        .info-table td.label { width: 150px; color: var(--accent-blue); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; text-transform: uppercase; font-weight: bold; }
+        .info-table td.val { color: var(--text-main); line-height: 1.5; }
+
+        .show-more-btn {
+            width: 100%; padding: 20px; background: rgba(168, 85, 247, 0.1); border: 1px dashed var(--accent-purple);
+            color: var(--accent-purple); font-family: 'JetBrains Mono'; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 20px;
+        }
+
+
+        .contact-box { background: var(--surface-color); border: 1px solid var(--border); max-width: 600px; margin: 0 auto; padding: 40px; border-radius: 24px; text-align: center; }
+        .avatar { width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--accent-purple); margin-bottom: 20px; object-fit: cover; }
+        .contact-links a { color: var(--accent-blue); text-decoration: none; display: block; margin: 10px 0; font-family: 'JetBrains Mono', monospace; }
+        
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        .footer-logo { color: var(--accent-blue); font-size: 1.2rem; margin-bottom: 20px; }
+        .footer-copy { color: var(--text-dim); font-size: 0.8rem; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .info-table td { display: block; width: 100% !important; padding: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo mono">AI_CONSTRUCTOR</div>
+            <ul class="nav-links">
+                <li><a href="#about">О кружке</a></li>
+                <li><a href="#goals">Цели</a></li>
+                <li><a href="#plan">Программа</a></li>
+                <li><a href="#contacts">Контакты</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="hero" id="about">
+        <h1 class="mono">AI-Конструктор: Создай МАХ-бота с нейросетью за 34 занятия</h1>
+        <p>Для студентов колледжа в 2026 году: от мастерства промптов до разработки полноценных AI-агентов без опыта программирования.</p>
+    </section>
+
+
+    <section id="goals">
+        <h2 class="section-title mono">Цели и задачи курса</h2>
+        <div class="goals-grid">
+            <div class="goal-card">
+                <h3 class="mono">ОСВОЕНИЕ GenAI</h3>
+                <p>За 34 занятия ты создашь работающего МАХ-бота, который решает реальную проблему</p>
+            </div>
+            <div class="goal-card">
+                <h3 class="mono">ПРАКТИЧЕСКИЙ ОПЫТ</h3>
+                <p>От промпт-инжиниринга до работы с API ведущих нейросетей: ChatGPT, Claude, YandexGPT.</p>
+            </div>
+            <div class="goal-card">
+                <h3 class="mono">СОЗДАНИЕ ПРОДУКТА</h3>
+                <p>GitHub-репозиторий, скринкаст, сертификат. Покажешь работодателю на собеседовании</p>
+            </div>
+            <div class="goal-card">
+                <h3 class="mono">ИТОГ</h3>
+                <p>Итогом обучения станет ваш собственный AI-агент в МАХ, готовый к реальному использованию.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="demo">
+        <h2 class="section-title mono">Интерактивный AI-помощник (ПРИМЕР БОТА)</h2>
+        <div class="demo-bot-section">
+            <div class="bot-window">
+                <div class="bot-header">
+                    <div class="bot-status"></div>
+                    <span class="mono" style="font-size: 0.8rem;">AI_Support_Bot</span>
+                </div>
+                <div class="bot-messages" id="chat">
+                    <div class="msg bot">Привет! Я — нейросетевой ассистент кружка. Хочешь узнать, что мы будем делать на курсе? Просто напиши!</div>
+                </div>
+                <div class="bot-input">
+                    <input type="text" id="userInput" placeholder="Напишите вопрос...">
+                    <button onclick="sendMsg()">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="plan">
+        <h2 class="section-title mono">Программа курса</h2>
+
+
+        <div id="main-lessons">
+            <!-- Занятия 1-8 -->
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №1. «Как приручить нейросеть?» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Вводная лекция + игра</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Знакомство с кружком. Что такое ИИ, чем GenAI отличается от классического ML. Правила безопасности: никогда не загружать паспортные данные в ChatGPT, проверять факты (галлюцинации). Как нейросети уже меняют рынок труда студентов СПО.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Игра «Угадай, что сгенерировано». Преподаватель показывает 5 текстов (3 — нейросеть, 2 — человек). Задача — отличить. Разбор ошибок.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">«Мой цифровой профиль» — текстовый файл, где студент пишет: 3 вещи, которые он хочет научиться делать с ИИ, и 2 страха про ИИ.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №2. «Кто лучший переговорщик?» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Практикум + соревнование</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">«Мой цифровой профиль» — текстовый файл, где студент пишет: 3 вещи, которые он хочет научиться делать с ИИ, и 2 страха про ИИ.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">«Промпт-баттл». Разбивка на пары. За 10 минут написать промпт, чтобы нейросеть объяснила тему «Дифференциальное исчисление» в стиле рэп-баттла. Победителя выбирает нейросеть-жюри (голосованием).</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">«Паспорт промптов» — файл my_prompts.md с 5 готовыми промптами для учёбы (написать реферат, объяснить теорему, сделать тест, переписать текст официально/сленгом, найти аргументы для спора).</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №3. «Текстовые нейросети: Личный ассистент» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Лекция + лабораторная</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Обзор: ChatGPT, Claude, YandexGPT, GigaChat. Различия, сильные стороны, ограничения. Как использовать для рерайтинга, конспектирования, поиска идей.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Взять свою старую лекцию (скан или текст) и за 10 минут сделать конспект в виде таблицы или mindmap.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Краткий конспект лекции в формате .md или .txt, созданный нейросетью из сырого материала.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №4. «Визуальный ИИ: От логотипа до мема» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Воркшоп</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Обзор генераторов: Midjourney, Кандинский 3.0, Шедеврум, DALL-E 3. Как писать промпты для изображений (стиль, композиция, отрицательные промпты).</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Создать логотип и аватарку для своего будущего бота. Тематика — AI/колледж/помощник. Прогнать через 3 разных генератора, выбрать лучший.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Логотип и аватарка в формате .png (512×512, прозрачный фон).</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №5. «Аудио и музыка от нейросетей» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Лабораторная</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Suno, Udio, ElevenLabs. Генерация звуковых эффектов, голоса и фоновой музыки.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Создание 30-секундного аудио-джингла для презентации проекта.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">MP3-файл с уникальным треком.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №6. «Компьютерное зрение: Видеть как ИИ» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Кодинг + эксперимент</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">OpenCV и Tesseract. Как нейросети распознают текст и объекты на фото.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Написание скрипта для оцифровки рукописного расписания с фотографии.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Python-скрипт ocr_reader.py.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №7. «Работа с таблицами: Excel + ИИ» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Лабораторная</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Pandas + AI-помощники. Анализ данных, построение графиков за секунды.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Анализ успеваемости группы по Excel-файлу и визуализация данных.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Графический отчет PNG.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №8. «Этика и безопасность: Красные линии» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Дискуссия + кейс-стади</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Джейлбрейк, утечки данных, авторское право и галлюцинации моделей.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Разбор кейсов использования ИИ в учебном процессе.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Чек-лист «Безопасное использование ИИ».</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <button class="show-more-btn mono" id="loadMoreBtn" onclick="toggleLessons()">ПОКАЗАТЬ ВСЕ ЗАНЯТИЯ (9–34)</button>
+
+        <div id="extra-lessons" style="display: none;">
+            <!-- Занятия 9-34 (сокращенные примеры, но с полной структурой) -->
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №9. «Архитектура AI-систем» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Теория + Схемы</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Как связаны Frontend, Backend и LLM. Понятие токенов и контекстного окна.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Отрисовка схемы работы будущего бота в Miro или на бумаге.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Схема архитектуры проекта.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №10. «Python Start: С нуля до кода» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Воркшоп</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Установка среды VS Code. Переменные, циклы и функции для ИИ.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Написание кода, автоматизирующего обработку текстовых данных.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Файл python_basics.py.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №13. «Интеграция API нейросетей» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Кодинг</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Работа с HTTP-запросами. Подключение YandexGPT API.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Бот, который отвечает на вопросы пользователя через LLM.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Скрипт ai_connector.py.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятия №21–26. «Хакатон: Сборка проекта» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Проектная работа</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">6 занятий интенсивной разработки своего продукта (МАХ-бота).</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Реализация функционала, исправление багов, деплой.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Рабочая ссылка на МАХ-бота.</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="lesson-card">
+                <div class="lesson-header">Занятие №34. «Финал: Демо-день и Портфолио» <span>+</span></div>
+                <div class="lesson-content">
+                    <table class="info-table">
+                        <tr><td class="label">Тип:</td><td class="val">Презентация</td></tr>
+                        <tr><td class="label">Описание:</td><td class="val">Защита проектов перед группой и приглашенными гостями.</td></tr>
+                        <tr><td class="label">Практика:</td><td class="val">Питч продукта (3 минуты) и ответы на вопросы.</td></tr>
+                        <tr><td class="label">Артефакт:</td><td class="val">Сертификат курса и готовый кейс в резюме.</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <p class="mono" style="text-align: center; color: var(--text-dim); font-size: 0.8rem; margin: 20px 0;">* Полный список из 34 занятий доступен в методическом плане колледжа.</p>
+        </div>
+    </section>
+
+    <!-- CONTACTS -->
+    <section id="contacts">
+        <div class="contact-box">
+            <img src="image/image_af43bb.jpg" alt="Елена Куприянова" class="avatar" onerror="this.src='https://via.placeholder.com/130/222/00D2FF?text=EA'">
+            <h3 class="mono">Елена Александровна Куприянова</h3>
+            <p style="color: var(--accent-blue); font-size: 0.8rem; text-transform: uppercase; font-weight: bold; margin-bottom: 15px;">Преподаватель кружка</p>
+            <div class="contact-links">
+                <a href="https://t.me/alenakuper90" target="_blank">Telegram: @alenakuper90</a>
+                <a href="mailto:alenakuper1990@gmail.com">Email: alenakuper1990@gmail.com</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-logo mono">AI_CONSTRUCTOR // 2026</div>
+        <p class="footer-copy mono">Кружок дополнительного образования колледжа. Все права на учебные материалы защищены.</p>
+    </div>
+</footer>
+
+<script>
+    // Логика чат-бота
+    function sendMsg() {
+        const input = document.getElementById('userInput');
+        const chat = document.getElementById('chat');
+        if (!input.value) return;
+
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.textContent = input.value;
+        chat.appendChild(userMsg);
+
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'msg bot';
+            const val = input.value.toLowerCase();
+            
+            if (val.includes('занят') || val.includes('делать')) {
+                botMsg.textContent = "Мы пройдем путь от создания картинок и музыки до программирования на Python и разработки умного МАХ-бота!";
+            } else if (val.includes('сложно') || val.includes('опыт')) {
+                botMsg.textContent = "Совсем нет! Мы начинаем с основ промпт-инжиниринга, а код будем учить постепенно с 10 занятия.";
+            } else if (val.includes('цел') || val.includes('задач')) {
+                botMsg.textContent = "Наша главная цель — дать вам навыки работы с GenAI и помочь создать готового AI-бота для вашего портфолио.";
+            } else {
+                botMsg.textContent = "Отличный вопрос! На кружке мы разберем это подробно. Хочешь посмотреть программу занятий ниже?";
+            }
+            
+            chat.appendChild(botMsg);
+            chat.scrollTop = chat.scrollHeight;
+        }, 600);
+
+        input.value = '';
+    }
+
+    // Аккордеон
+    document.querySelectorAll('.lesson-header').forEach(h => {
+        h.addEventListener('click', () => {
+            const card = h.parentElement;
+            card.classList.toggle('active');
+            h.querySelector('span').textContent = card.classList.contains('active') ? '−' : '+';
+        });
+    });
+
+    // Показать все занятия
+    function toggleLessons() {
+        const extra = document.getElementById('extra-lessons');
+        const btn = document.getElementById('loadMoreBtn');
+        if (extra.style.display === 'none') {
+            extra.style.display = 'block';
+            btn.textContent = 'СКРЫТЬ ДОПОЛНИТЕЛЬНЫЕ ЗАНЯТИЯ';
+        } else {
+            extra.style.display = 'none';
+            btn.textContent = 'ПОКАЗАТЬ ВСЕ ЗАНЯТИЯ (9–34)';
+        }
+    }
+</script>
+
+</body>
+</html>
